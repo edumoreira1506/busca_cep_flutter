@@ -3,6 +3,8 @@ import 'package:busca_cep_flutter/source/remote/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:busca_cep_flutter/model/zip_code_data.dart' as model;
+import 'dart:async';
+import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
@@ -17,6 +19,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool isLoading = false;
   late AnimationController loadingAnimationController;
   final database = AppDatabase();
+  String batteryLevel = '';
+
+  static const platform = MethodChannel('samples.flutter.dev/battery');
 
   @override
   void initState() {
@@ -31,6 +36,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     loadingAnimationController.repeat();
     super.initState();
+  }
+
+  Future<void> getBatteryLevel() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    String newBatteryLevel;
+    try {
+      final result = await platform.invokeMethod<int>('getBatteryLevel');
+      newBatteryLevel = 'Nível de bateria $result %';
+    } on PlatformException catch (e) {
+      newBatteryLevel = "Erro obtendo nível de bateria: '${e.message}'.";
+    }
+
+    setState(() {
+      batteryLevel = newBatteryLevel;
+      isLoading = false;
+    });
   }
 
   Future<List<ZipCodeDataData>> getZipCodesFromDB() async {
@@ -139,6 +163,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               onPressed: isLoading ? null : findZipCode,
               child: const Text("Buscar"),
             ),
+            ElevatedButton(
+              onPressed: isLoading ? null : getBatteryLevel,
+              child: const Text("Ver nível de bateria"),
+            ),
+            Text(batteryLevel),
             if (isLoading)
               LinearProgressIndicator(
                 value: loadingAnimationController.value,

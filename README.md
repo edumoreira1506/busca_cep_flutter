@@ -10,7 +10,7 @@ Checklist do projeto:
 - [x] Retrofit
 - [ ] Testes com cobertura de no mínimo 10%
 - [x] Gerência de estados
-- [ ] Platform channel
+- [x] Platform channel
 - [x] Mínimo de usabilidade
 - [x] Temas
 - [ ] Github e Vídeo demonstrativo
