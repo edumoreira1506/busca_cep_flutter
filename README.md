@@ -6,7 +6,7 @@ Checklist do projeto:
 
 - [x] Stateless e Stateful
 - [x] Uso de alguma Widget não vista em aula (LinearProgressIndicator)
-- [ ] Persistência
+- [x] Persistência
 - [x] Retrofit
 - [ ] Testes com cobertura de no mínimo 10%
 - [x] Gerência de estados

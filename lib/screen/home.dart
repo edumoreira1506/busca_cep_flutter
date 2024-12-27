@@ -1,3 +1,4 @@
+import 'package:busca_cep_flutter/source/local/database.dart';
 import 'package:busca_cep_flutter/source/remote/rest_client.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -15,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool isLoading = false;
   late AnimationController loadingAnimationController;
+  final database = AppDatabase();
 
   @override
   void initState() {
@@ -31,19 +33,52 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
   }
 
+  Future<List<ZipCodeDataData>> getZipCodesFromDB() async {
+    List<ZipCodeDataData> allItems =
+        await database.select(database.zipCodeData).get();
+
+    return allItems;
+  }
+
   Future<void> findZipCode() async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      await Future.delayed(Duration(seconds: 3));
+      var typedZipCode = widget.zipCodeController.text.replaceAll("\\D", "");
+      var zipCodesFromDB = await getZipCodesFromDB();
+      var zipCodePersisted = zipCodesFromDB.firstWhere(
+          (item) => item.cep == typedZipCode,
+          orElse: () => const ZipCodeDataData(
+              cep: "", estado: "", localidade: "", bairro: "", logradouro: ""));
 
-      final dio = Dio();
-      final client = RestClient(dio);
+      model.ZipCodeData zipCodeData;
 
-      model.ZipCodeData zipCodeData =
-          await client.getZipCodeData(widget.zipCodeController.text);
+      // It uses DB data when the zipcode is already stored
+      if (zipCodePersisted.cep != "") {
+        zipCodeData = model.ZipCodeData(
+            cep: zipCodePersisted.cep,
+            localidade: zipCodePersisted.localidade,
+            estado: zipCodePersisted.estado,
+            bairro: zipCodePersisted.bairro,
+            logradouro: zipCodePersisted.logradouro);
+      } else {
+        await Future.delayed(const Duration(seconds: 3));
+
+        final dio = Dio();
+        final client = RestClient(dio);
+
+        zipCodeData =
+            await client.getZipCodeData(widget.zipCodeController.text);
+
+        database.into(database.zipCodeData).insert(ZipCodeDataCompanion.insert(
+            cep: typedZipCode,
+            localidade: zipCodeData.localidade ?? "",
+            estado: zipCodeData.estado ?? "",
+            bairro: zipCodeData.bairro ?? "",
+            logradouro: zipCodeData.logradouro ?? ""));
+      }
 
       showBottomSheet(
         enableDrag: true,
