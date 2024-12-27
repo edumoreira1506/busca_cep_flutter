@@ -13,4 +13,4 @@ Checklist do projeto:
 - [x] Platform channel
 - [x] Mínimo de usabilidade
 - [x] Temas
-- [ ] Github e Vídeo demonstrativo
+- [x] Github e [Vídeo demonstrativo](https://youtu.be/wp6r9F8y-Iw)
