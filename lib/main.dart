@@ -15,6 +15,11 @@ class MainApp extends StatelessWidget {
         body: Center(
           child: HomeScreen(),
         ),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
       ),
     );
   }

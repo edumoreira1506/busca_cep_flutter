@@ -12,5 +12,5 @@ Checklist do projeto:
 - [x] Gerência de estados
 - [ ] Platform channel
 - [x] Mínimo de usabilidade
-- [ ] Temas
+- [x] Temas
 - [ ] Github e Vídeo demonstrativo

@@ -123,13 +123,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Busca CEP - Flutter"),
+            Text("Busca CEP - Flutter",
+                style: Theme.of(context).textTheme.titleLarge),
             TextFormField(
               controller: widget.zipCodeController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Digite um CEP',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
               ),
               enabled: !isLoading,
             ),
